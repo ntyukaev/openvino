@@ -294,7 +294,7 @@
                 <tab type="user" title="Inference Engine Plugin Development Guide" url="ie_plugin_api/index.html"/>
                 <!-- Deployment Manager-->
                 <tab type="user" title="Deployment Manager Guide" url="@ref openvino_docs_install_guides_deployment_manager_tool"/>
-				</tab><!-- Workbench -->
+				<!-- Workbench -->
 				<tab type="usergroup" title="Deep Learning Workbench" url="@ref workbench_docs_Workbench_DG_Introduction">
 					<tab type="user" title="Introduction" url="@ref workbench_docs_Workbench_DG_Introduction"/>
 					<tab type="usergroup" title="DL Workbench Installation Guide" url="@ref workbench_docs_Workbench_DG_Install_Workbench">

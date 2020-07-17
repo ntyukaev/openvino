@@ -20,13 +20,17 @@ if(NOT LATEX_FOUND)
     message(FATAL_ERROR "LATEX is required to build the documentation")
 endif()
 
+set(DOCS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs)
 set(DOXYGEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen)
 set(IE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../inference-engine)
 set(PYTHON_API_IN ${IE_SOURCE_DIR}/ie_bridges/python/src/openvino/inference_engine/ie_api.pyx)
+set(PYTHON_API_OUT ${DOCS_BINARY_DIR}/python_api/ie_api.pyx)
 set(C_API ${IE_SOURCE_DIR}/ie_bridges/c/include)
-set(DOCS_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs)
-set(PYTHON_API_OUT ${DOCS_DIR}/python_api/ie_api.pyx)
-set(PLUGIN_API_DIR ${DOCS_DIR}/IE_PLUGIN_DG)
+set(PLUGIN_API_DIR ${DOCS_BINARY_DIR}/IE_PLUGIN_DG)
+
+# Preprocessing scripts
+set(DOXY_MD_FILTER ${DOXYGEN_DIR}/doxy_md_filter.py)
+set(PYX_FILTER ${DOXYGEN_DIR}/pyx_filter.py)
 
 if(NOT ENABLE_DOCKER)
     add_subdirectory(examples)
@@ -58,79 +62,110 @@ endif()
 
 # OpenVINO docs
 
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}"
-     DESTINATION "${DOCS_DIR}"
-     FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
+# file(COPY "${CMAKE_CURRENT_SOURCE_DIR}"
+#      DESTINATION "${DOCS_BINARY_DIR}"
+#      FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
+# )
+
+# file(COPY "${IE_SOURCE_DIR}"
+#      DESTINATION "${DOCS_BINARY_DIR}"
+#      FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
+# )
+
+file(GLOB_RECURSE doc_source_files
+     LIST_DIRECTORIES true
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}../
+     *.md *.png *.gif
 )
 
-file(COPY "${IE_SOURCE_DIR}"
-     DESTINATION "${DOCS_DIR}"
-     FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
-)
+configure_file(${PYTHON_API_IN} ${PYTHON_API_OUT} @ONLY)
 
-configure_file("${PYTHON_API_IN}" "${PYTHON_API_OUT}" @ONLY)
+set(IE_CONFIG_SOURCE ${DOXYGEN_DIR}/ie_docs.config)
+set(C_CONFIG_SOURCE ${DOXYGEN_DIR}/ie_docs.config)
+set(PY_CONFIG_SOURCE ${DOXYGEN_DIR}/ie_py_api.config)
+set(PLUGIN_CONFIG_SOURCE ${DOXYGEN_DIR}/ie_plugin_api.config)
 
-set(IE_CONFIG ${DOCS_DIR}/ie_docs)
-set(C_CONFIG ${DOCS_DIR}/ie_c_api)
-set(PY_CONFIG ${DOCS_DIR}/ie_py_api)
-set(PLUGIN_CONFIG ${DOCS_DIR}/ie_plugin_api)
-set(IE_LAYOUT ${DOCS_DIR}/ie_docs.xml)
-set(C_LAYOUT ${DOCS_DIR}/ie_c_api.xml)
-set(PY_LAYOUT ${DOCS_DIR}/ie_py_api.xml)
-set(PLUGIN_LAYOUT ${DOCS_DIR}/ie_plugin_api.xml)
+set(IE_CONFIG_BINARY ${DOCS_BINARY_DIR}/ie_docs.config)
+set(C_CONFIG_BINARY ${DOCS_BINARY_DIR}/ie_c_api.config)
+set(PY_CONFIG_BINARY ${DOCS_BINARY_DIR}/ie_py_api.config)
+set(PLUGIN_CONFIG_BINARY ${DOCS_BINARY_DIR}/ie_plugin_api.config)
 
-configure_file(${DOXYGEN_DIR}/ie_docs ${IE_CONFIG} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_c_api ${C_CONFIG} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_py_api ${PY_CONFIG} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_plugin_api ${PLUGIN_CONFIG} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_docs.xml ${IE_LAYOUT} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_c_api.xml ${C_LAYOUT} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_py_api.xml ${PY_LAYOUT} @ONLY)
-configure_file(${DOXYGEN_DIR}/ie_plugin_api.xml ${PLUGIN_LAYOUT} @ONLY)
+set(IE_LAYOUT_SOURCE ${DOXYGEN_DIR}/ie_docs.xml)
+set(C_LAYOUT_SOURCE ${DOXYGEN_DIR}/ie_c_api.xml)
+set(PY_LAYOUT_SOURCE ${DOXYGEN_DIR}/ie_py_api.xml)
+set(PLUGIN_LAYOUT_SOURCE ${DOXYGEN_DIR}/ie_plugin_api.xml)
+
+set(IE_LAYOUT_BINARY ${DOCS_BINARY_DIR}/ie_docs.xml)
+set(C_LAYOUT_BINARY ${DOCS_BINARY_DIR}/ie_c_api.xml)
+set(PY_LAYOUT_BINARY ${DOCS_BINARY_DIR}/ie_py_api.xml)
+set(PLUGIN_LAYOUT_BINARY ${DOCS_BINARY_DIR}/ie_plugin_api.xml)
+
+# Tables of contents
+configure_file(${IE_LAYOUT_SOURCE} ${IE_LAYOUT_BINARY} @ONLY)
+configure_file(${C_LAYOUT_SOURCE} ${C_LAYOUT_BINARY} @ONLY)
+configure_file(${PY_LAYOUT_SOURCE} ${PY_LAYOUT_BINARY} @ONLY)
+configure_file(${PLUGIN_LAYOUT_SOURCE} ${PLUGIN_LAYOUT_BINARY} @ONLY)
+
+# Doxygen config files
+configure_file(${IE_CONFIG_SOURCE} ${IE_CONFIG_BINARY} @ONLY)
+configure_file(${C_CONFIG_SOURCE} ${C_CONFIG_BINARY} @ONLY)
+configure_file(${PY_CONFIG_SOURCE} ${PY_CONFIG_BINARY} @ONLY)
+configure_file(${PLUGIN_CONFIG_SOURCE} ${PLUGIN_CONFIG_BINARY} @ONLY)
 
 # Preprocessing scripts
 set(DOXY_MD_FILTER ${DOXYGEN_DIR}/doxy_md_filter.py)
 set(PYX_FILTER ${DOXYGEN_DIR}/pyx_filter.py)
 
-# Execute preprocessing scripts
-execute_process(COMMAND ${Python3_EXECUTABLE} ${DOXY_MD_FILTER} ${DOCS_DIR})
-execute_process(COMMAND ${Python3_EXECUTABLE} ${PYX_FILTER} ${PYTHON_API_OUT})
-
 add_custom_target(c_api
-                  COMMAND ${DOXYGEN_EXECUTABLE} ${C_CONFIG}
-                  WORKING_DIRECTORY ${DOCS_DIR}
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${C_CONFIG_BINARY}
+                  WORKING_DIRECTORY ${DOCS_BINARY_DIR}
                   COMMENT "Generating C API Reference"
                   VERBATIM
 )
 
 add_custom_target(py_api
-                  COMMAND ${DOXYGEN_EXECUTABLE} ${PY_CONFIG}
-                  WORKING_DIRECTORY ${DOCS_DIR}
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${PY_CONFIG_BINARY}
+                  WORKING_DIRECTORY ${DOCS_BINARY_DIR}
                   COMMENT "Generating Python API Reference"
                   VERBATIM
 )
 
 add_custom_target(plugin_api
-                  COMMAND ${DOXYGEN_EXECUTABLE} ${PLUGIN_CONFIG}
-                  WORKING_DIRECTORY ${DOCS_DIR}
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${PLUGIN_CONFIG_BINARY}
+                  WORKING_DIRECTORY ${DOCS_BINARY_DIR}
                   COMMENT "Generating Plugin API Reference"
                   VERBATIM
 )
 
 add_custom_target(ie_docs
-                  COMMAND ${DOXYGEN_EXECUTABLE} ${IE_CONFIG}
-                  WORKING_DIRECTORY ${DOCS_DIR}
+                  COMMAND ${DOXYGEN_EXECUTABLE} ${IE_CONFIG_BINARY}
+                  WORKING_DIRECTORY ${DOCS_BINARY_DIR}
                   VERBATIM
 )
 
 add_custom_target(openvino_docs
-                  DEPENDS c_api 
-                  DEPENDS py_api
-                  DEPENDS ie_docs
-                  DEPENDS plugin_api
+                  DEPENDS c_api py_api ie_docs plugin_api
                   COMMENT "Generating OpenVINO documentation"
                   VERBATIM
 )
+
+add_custom_command(TARGET py_api
+                   PRE_BUILD
+                   COMMAND ${Python3_EXECUTABLE} ${PYX_FILTER} ${PYTHON_API_OUT}
+                   COMMENT "Execute preprocessing scripts"
+)
+
+add_custom_command(TARGET ie_docs
+                   PRE_BUILD
+                   COMMAND ${Python3_EXECUTABLE} ${DOXY_MD_FILTER} ${DOCS_BINARY_DIR}
+                   COMMENT "Execute preprocessing scripts"
+)
+
+foreach(source_file ${doc_source_files})
+  add_custom_command(TARGET ie_docs
+                     PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${source_file} ${DOCS_BINARY_DIR}/${source_file})
+endforeach()
 
 set_target_properties(ie_docs PROPERTIES FOLDER docs)
 

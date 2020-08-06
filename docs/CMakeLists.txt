@@ -152,13 +152,7 @@ add_custom_target(openvino_docs
 add_custom_command(TARGET py_api
                    PRE_BUILD
                    COMMAND ${Python3_EXECUTABLE} ${PYX_FILTER} ${PYTHON_API_OUT}
-                   COMMENT "Execute preprocessing scripts"
-)
-
-add_custom_command(TARGET ie_docs
-                   PRE_BUILD
-                   COMMAND ${Python3_EXECUTABLE} ${DOXY_MD_FILTER} ${DOCS_BINARY_DIR}
-                   COMMENT "Execute preprocessing scripts"
+                   COMMENT "Pre-process Python API."
 )
 
 foreach(source_file ${doc_source_files})
@@ -166,6 +160,12 @@ foreach(source_file ${doc_source_files})
                      PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${source_file} ${DOCS_BINARY_DIR}/${source_file})
 endforeach()
+
+add_custom_command(TARGET ie_docs
+                   PRE_BUILD
+                   COMMAND ${Python3_EXECUTABLE} ${DOXY_MD_FILTER} ${DOCS_BINARY_DIR}
+                   COMMENT "Pre-process markdown and image links."
+)
 
 set_target_properties(ie_docs PROPERTIES FOLDER docs)
 

@@ -20,9 +20,9 @@ if(NOT LATEX_FOUND)
     message(FATAL_ERROR "LATEX is required to build the documentation")
 endif()
 
-set(DOCS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs)
-set(DOXYGEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doxygen)
-set(IE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../inference-engine)
+set(DOCS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(DOXYGEN_DIR ${OpenVINO_MAIN_SOURCE_DIR}/docs/doxygen)
+set(IE_SOURCE_DIR ${OpenVINO_MAIN_SOURCE_DIR}/inference-engine)
 set(PYTHON_API_IN ${IE_SOURCE_DIR}/ie_bridges/python/src/openvino/inference_engine/ie_api.pyx)
 set(PYTHON_API_OUT ${DOCS_BINARY_DIR}/python_api/ie_api.pyx)
 set(C_API ${IE_SOURCE_DIR}/ie_bridges/c/include)
@@ -60,22 +60,17 @@ if(NOT ENABLE_DOCKER)
     endforeach()
 endif()
 
-# OpenVINO docs
-
-# file(COPY "${CMAKE_CURRENT_SOURCE_DIR}"
-#      DESTINATION "${DOCS_BINARY_DIR}"
-#      FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
-# )
-
-# file(COPY "${IE_SOURCE_DIR}"
-#      DESTINATION "${DOCS_BINARY_DIR}"
-#      FILES_MATCHING PATTERN *.md PATTERN *.png PATTERN *.gif
-# )
-
 file(GLOB_RECURSE doc_source_files
      LIST_DIRECTORIES true
-     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}../
-     *.md *.png *.gif
+     RELATIVE ${OpenVINO_MAIN_SOURCE_DIR}
+     ${OpenVINO_MAIN_SOURCE_DIR}/docs/*.md
+     ${OpenVINO_MAIN_SOURCE_DIR}/docs/*.png
+     ${OpenVINO_MAIN_SOURCE_DIR}/docs/*.gif
+     ${OpenVINO_MAIN_SOURCE_DIR}/docs/*.jpg
+     ${OpenVINO_MAIN_SOURCE_DIR}/inference-engine/*.md
+     ${OpenVINO_MAIN_SOURCE_DIR}/inference-engine/*.png
+     ${OpenVINO_MAIN_SOURCE_DIR}/inference-engine/*.gif
+     ${OpenVINO_MAIN_SOURCE_DIR}/inference-engine/*.jpg
 )
 
 configure_file(${PYTHON_API_IN} ${PYTHON_API_OUT} @ONLY)
@@ -158,7 +153,7 @@ add_custom_command(TARGET py_api
 foreach(source_file ${doc_source_files})
   add_custom_command(TARGET ie_docs
                      PRE_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${source_file} ${DOCS_BINARY_DIR}/${source_file})
+                     COMMAND ${CMAKE_COMMAND} -E copy ${OpenVINO_MAIN_SOURCE_DIR}/${source_file} ${DOCS_BINARY_DIR}/${source_file})
 endforeach()
 
 add_custom_command(TARGET ie_docs

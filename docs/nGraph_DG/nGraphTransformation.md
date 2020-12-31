@@ -5,8 +5,8 @@ This guide contains all necessary information that you need to start implementin
 ## Prerequisites
 Before creating a transformation, do the following:
 
-* Make sure that there is no transformation with the same functionality in the [Transformation Library](group__ie__transformation__api.html)
-* Learn how the [Transformation Library](group__ie__transformation__api.html) is structured and how transformations are organized
+* Make sure that there is no transformation with the same functionality in the [Transformation Library](ie_plugin_api/group__ie__transformation__api.html)
+* Learn how the [Transformation Library](ie_plugin_api/group__ie__transformation__api.html) is structured and how transformations are organized
 * Understand where to put your transformation code
 
 ### Transformation Library Structure

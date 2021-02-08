@@ -99,6 +99,7 @@ def parse(log, ignore_list, strip, include_omz=False, include_wb=False, include_
 
 def main():
     args = parse_arguments()
+    print(args.strip)
     parse(args.log,
           args.ignore_list,
           args.strip,

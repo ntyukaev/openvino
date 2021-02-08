@@ -42,8 +42,6 @@ def parse_arguments():
 def strip_path(path, strip):
     """Strip `path` components ends on `strip`
     """
-    print('Path:', path)
-    print('Strip:', strip)
     path = path.replace('\\', '/')
     if path.endswith('.md') or path.endswith('.tag'):
         strip = os.path.join(strip, 'build/docs').replace('\\', '/') + '/'

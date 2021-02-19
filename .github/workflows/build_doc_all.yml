@@ -36,8 +36,9 @@ jobs:
 
       - name: Prepare open_model_zoo docs
         run: |
-          cd open_model_zoo
-
+          cd omz
+          mkdir build
+          python3 ci/prepare-documentation.py build/
 
       - name: CMake doc
         run: |

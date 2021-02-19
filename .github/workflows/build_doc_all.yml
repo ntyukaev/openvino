@@ -12,11 +12,12 @@ jobs:
           lfs: true
 
       - name: Clone Open Model Zoo
-        uses: actions/checkout@develop
+        uses: actions/checkout@v2
         with:
          repository: openvinotoolkit/open_model_zoo
          lfs: true
          path: ./omz
+         ref: 'develop'
 
       - name: Install dependencies
         run: |

@@ -16,6 +16,7 @@ jobs:
         with:
          repository: openvinotoolkit/open_model_zoo
          lfs: true
+         path: ./omz
 
       - name: Install dependencies
         run: |
@@ -32,6 +33,11 @@ jobs:
           cmake ..
           cmake --build . -j`nproc`
           sudo make install
+
+      - name: Prepare open_model_zoo docs
+        run: |
+          cd open_model_zoo
+
 
       - name: CMake doc
         run: |

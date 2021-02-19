@@ -258,7 +258,7 @@ function(build_docs)
             list(APPEND commands COMMAND ${CMAKE_COMMAND} -E copy
                 "${OMZ_DOCS_DIR}/${source_file}" "${DOCS_BUILD_DIR}/omz/${source_file}")
         endforeach()
-        configure_file("${OMZ_DOCS_DIR}/omz_docs.xml" "${DOCS_BUILD_DIR}/omz_docs.xml" @ONLY)
+        configure_file("${OMZ_DOCS_DIR}/DoxygenLayout.xml" "${DOCS_BUILD_DIR}/DoxygenLayout.xml" @ONLY)
     endif()
 
     # workbench doc files

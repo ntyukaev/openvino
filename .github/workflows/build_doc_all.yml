@@ -38,15 +38,15 @@ jobs:
       - name: Prepare open_model_zoo docs
         run: |
           cd omz
-          mkdir build
+          mkdir omz_converted
           python3 -m pip install -r ci/requirements-documentation.in
-          python3 ci/prepare-documentation.py build/
+          python3 ci/prepare-documentation.py omz_converted/
 
       - name: CMake doc
         run: |
           mkdir build
           cd build
-          cmake -DENABLE_DOCS=ON .. -OMZ_DOCS_DIR="../omz/build/"
+          cmake -DENABLE_DOCS=ON .. -OMZ_DOCS_DIR=../omz/omz_converted/
 
       - name: Build doc
         run: cmake --build . --target openvino_docs

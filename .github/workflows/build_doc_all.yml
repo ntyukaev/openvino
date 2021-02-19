@@ -46,7 +46,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DENABLE_DOCS=ON .. -OMZ_DOCS_DIR=../omz/omz_converted/
+          cmake -DENABLE_DOCS=ON .. -DOMZ_DOCS_DIR=../omz/omz_converted/
 
       - name: Build doc
         run: cmake --build . --target openvino_docs

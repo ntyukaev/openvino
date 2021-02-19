@@ -14,7 +14,7 @@ jobs:
       - name: Clone Open Model Zoo
         uses: actions/checkout@v2
         with:
-         repository:openvinotoolkit/open_model_zoo
+         repository: openvinotoolkit/open_model_zoo
          lfs: true
 
       - name: Install dependencies

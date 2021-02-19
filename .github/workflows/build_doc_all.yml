@@ -12,7 +12,7 @@ jobs:
           lfs: true
 
       - name: Clone Open Model Zoo
-        uses: actions/checkout@v2
+        uses: actions/checkout@develop
         with:
          repository: openvinotoolkit/open_model_zoo
          lfs: true

@@ -39,6 +39,7 @@ jobs:
         run: |
           cd omz
           mkdir build
+          python3 -m pip install -r ci/requirements-documentation.in
           python3 ci/prepare-documentation.py build/
 
       - name: CMake doc
